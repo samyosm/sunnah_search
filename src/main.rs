@@ -1,11 +1,28 @@
 mod preprocessing;
 mod tokenizer;
 
+use serde::{Deserialize, Serialize};
+use serde_json::Value;
+use std::fs;
 use tokenizer::get_tokens;
 
-fn main() {
-    let document = r#"I heard Allah's Messenger (ﷺ) saying, "The reward of deeds depends upon the intentions and every person will get the reward according to what he has intended. So whoever emigrated for worldly benefits or for a woman to marry, his emigration was for what he emigrated for.""#;
-    let tokens = get_tokens(document);
+#[derive(Serialize, Deserialize)]
+struct Hadith {
+    text: String,
+}
 
-    println!("{:?}", tokens);
+#[derive(Serialize, Deserialize)]
+struct HadithCollection {
+    hadiths: Vec<Hadith>,
+}
+
+fn main() {
+    let file_path = "./res/raw_hadiths/eng-bukhari.json";
+    let contents = fs::read_to_string(file_path).expect("Should have been able to read the file");
+
+    let v: HadithCollection = serde_json::from_str(&contents).expect("valid JSON");
+
+    for Hadith { text } in v.hadiths {
+        println!("{}", text)
+    }
 }
