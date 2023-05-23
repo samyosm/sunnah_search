@@ -1,12 +1,12 @@
-use std::collections::HashMap;
 use std::fs;
+use std::{collections::HashMap, error::Error};
 
 use crate::{
     tokenizer,
     types::{Hadith, HadithCollection},
 };
 
-pub fn get_raw_hadith_files_indexes(file_paths: Vec<&str>) -> HashMap<String, usize> {
+pub fn get_raw_hadith_files_term_counts(file_paths: Vec<&str>) -> HashMap<String, usize> {
     let mut hadiths: Vec<Hadith> = Vec::new();
 
     file_paths.iter().for_each(|file_path| {
@@ -21,16 +21,16 @@ pub fn get_raw_hadith_files_indexes(file_paths: Vec<&str>) -> HashMap<String, us
             .for_each(|h| hadiths.push(h.clone()));
     });
 
-    let mut index: HashMap<String, usize> = HashMap::new();
+    let mut term_counts: HashMap<String, usize> = HashMap::new();
     hadiths.iter().for_each(|Hadith { text }| {
         let tokens = tokenizer::get_tokens(text);
         for token in tokens {
-            index
+            term_counts
                 .entry(token.to_lowercase())
                 .and_modify(|count| *count += 1)
                 .or_insert(1);
         }
     });
 
-    return index;
+    return term_counts;
 }

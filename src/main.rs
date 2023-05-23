@@ -1,5 +1,5 @@
-mod indexer;
 mod preprocessing;
+mod term_counter;
 mod tokenizer;
 mod types;
 
